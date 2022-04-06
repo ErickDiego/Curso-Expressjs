@@ -1,4 +1,5 @@
-const {tracksModel} = require("../models")
+const {storageModel} = require("../models")
+const PUBLIC_URl = process.env.PUBLIC_URl;
 
 /**
  * obtener lista de la base de datos
@@ -6,7 +7,7 @@ const {tracksModel} = require("../models")
  * @param {*} res 
  */
 const getItems = async (req, res) => {
-    const data = await tracksModel.find({}); 
+    const data = await storageModel.find({}); 
 
     res.send({data})
 }
@@ -24,11 +25,17 @@ const getItem = (req, res) => {
  * @param {*} res 
  */
 const createItem = async (req, res) => {
-    const {body} = req;
-    console.log(body)
+    const {body, file} = req
 
-    const data = await tracksModel.create(body)
-    res.send(data)
+    console.log(file)
+
+    const fileData = {
+        filename: file.filename,
+        url: `${PUBLIC_URl}/${file.filename}`
+    }
+
+    const data = await storageModel.create(fileData)
+    res.send({data}) //lo que se va a devolver como respuesta
 }
 /**
  * Actualizar un registro de la base de datos

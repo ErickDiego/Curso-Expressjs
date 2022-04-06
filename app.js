@@ -6,6 +6,7 @@ const app = express()
 
 app.use(cors())
 app.use(express.json()) //para que la api pueda recibir un body
+app.use(express.static("storage")) //configuracion para poder dar permiso para acceder a la informacion en la carpeta
 
 const port = process.env.PORT //Configurando la variable de entorno
 
