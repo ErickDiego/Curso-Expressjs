@@ -1,3 +1,6 @@
+const { matchedData } = require("express-validator");
+const req = require("express/lib/request");
+const res = require("express/lib/response");
 const {tracksModel} = require("../models")
 
 /**
@@ -6,17 +9,28 @@ const {tracksModel} = require("../models")
  * @param {*} res 
  */
 const getItems = async (req, res) => {
-    const data = await tracksModel.find({}); 
+    try {
+        const data = await tracksModel.find({}); 
+        res.send({data})
 
-    res.send({data})
+    } catch (error) {
+        handleHttpError(res, 'ERROR_EN_GETITEMS')
+    }    
 }
 /**
  * Obtener un registro de la base de datos
  * @param {*} req 
  * @param {*} res 
  */
-const getItem = (req, res) => {
-
+const getItem = async (req, res) => {
+    try {
+        req = matchedData(req)
+        const {id} = req
+        const data = await tracksModel.findById(id); 
+        res.send({data})
+    } catch (error) {
+        handleHttpError(res, "ERROR_GET_ITEM")
+    }
 }
 /**
  * Crear un registro en la base de datos
@@ -24,18 +38,22 @@ const getItem = (req, res) => {
  * @param {*} res 
  */
 const createItem = async (req, res) => {
-    const {body} = req;
-    console.log(body)
+    try {
+        const body =  matchedData(req) // la siguiente funcion permite utilizar solo las variables necesarias
+        const data = await tracksModel.create(body)
+              
+        res.send({data})        
+    } catch (error) {
+        handleHttpError(res, 'ERROR_EN_CREATEITEMS')        
+    }
 
-    const data = await tracksModel.create(body)
-    res.send(data)
 }
 /**
  * Actualizar un registro de la base de datos
  * @param {*} req 
  * @param {*} res 
  */
-const updateItem = (req, res) => {
+const updateItem = async (req, res) => {
     
 }
 /**
@@ -43,7 +61,9 @@ const updateItem = (req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-const deleteItem = (req, res) => {}
+const deleteItem = async (req, res) => {
+
+}
 
 
 module.exports = {getItems, getItem, createItem, updateItem, deleteItem};
